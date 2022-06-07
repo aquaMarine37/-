@@ -4,12 +4,15 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Todos {
-    public String task;
-    public String type;
-    public List<String> allTasks;
 
-    public Todos() {
-        this.allTasks = new ArrayList<>();
+    private ArrayList<String> allTasks = new ArrayList<>();
+
+    public ArrayList<String> getListTasks() {
+        return allTasks;
+    }
+
+    public void setListTasks(ArrayList<String> listTasks) {
+        this.allTasks = allTasks;
     }
 
     public void addTask(String task) {
