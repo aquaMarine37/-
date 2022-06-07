@@ -2,6 +2,9 @@ package ru.netology.javacore;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.io.*;
 import java.net.ServerSocket;
@@ -19,34 +22,37 @@ public class TodoServer {
 
     public void start() throws IOException {
         System.out.println("Starting server at " + port + "...");
+        JSONParser parser = new JSONParser();
+        try (ServerSocket serverSocket = new ServerSocket(port);) {
 
-        try (ServerSocket serverSocket = new ServerSocket(8989);) { // стартуем сервер один(!) раз
-            while (true) { // в цикле(!) принимаем подключения
+            while (true) {
                 try (
-                        Socket socket = serverSocket.accept();
-                        BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                        PrintWriter out = new PrintWriter(socket.getOutputStream());
+                        Socket clientSocket = serverSocket.accept();
+                        PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
+                        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
                 ) {
                     final String clientTaskJson = in.readLine();
 
-                    GsonBuilder builder = new GsonBuilder();
-                    Gson gson = builder.create();
-                    Todos todos1 = gson.fromJson(clientTaskJson, Todos.class);
-                    System.out.println("type " + todos1.type + " task " + todos1.task);
+                    //Parser
 
-                    if (todos1.type.equals("ADD")) {
-                        todos.addTask(todos1.task);
+                    Object obj = parser.parse(clientTaskJson);
+                    JSONObject jsonObject = (JSONObject) obj;
+                    String typeParse = (String) jsonObject.get("type");
+                    String taskParse = (String) jsonObject.get("task");
+
+                    if (typeParse.equals("ADD")) {
+                        todos.addTask(taskParse);
                     } else {
-                        if (todos1.type.equals("REMOVE")) {
-                            todos.removeTask(todos1.task);
-                        } else {
+                        if (typeParse.equals("REMOVE")) {
+                            todos.removeTask(taskParse);
                         }
                     }
+                    //sent to client
                     out.println(String.format(todos.getAllTasks()));
                 }
             }
-        } catch (IOException e) {
-            System.out.println("Не могу стартовать сервер");
+        } catch (IOException | ParseException e) {
+            System.out.println("WRONG!");
             e.printStackTrace();
         }
     }
