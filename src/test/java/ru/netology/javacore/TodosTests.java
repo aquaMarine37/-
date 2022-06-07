@@ -13,24 +13,34 @@ import java.util.List;
 import static org.junit.Assert.assertTrue;
 
 public class TodosTests {
-    Todos todos = new Todos();
+    Todos sut = new Todos();
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void addTaskTest() {
-        String task = "RUN";  // given
-        ArrayList<String> allTasks1 = new ArrayList<>();
-        allTasks1.add(task);
-        todos.addTask(task); // when
-        assertTrue(allTasks1.equals(todos.allTasks)); // then
+        // given:
+        String task = "Run";
+        ArrayList<String> list1 = new ArrayList<>();
+        list1.add(task);
+
+        // when:
+        sut.addTask(task);
+
+        // then:
+        assertTrue(list1.equals(sut.getListTasks()));
     }
 
-    @Test
+    @org.junit.jupiter.api.Test
     public void removeTaskTest() {
-        String task = "English";  // given
-        ArrayList<String> listTasks = new ArrayList<>();
-        listTasks.remove(task);
-        todos.removeTask(task); // when
-        assertTrue(listTasks.equals(todos.allTasks)); // then
+        // given:
+        String task = "Run";
+        ArrayList<String> list1 = new ArrayList<>();
+        list1.remove(task);
+
+        // when:
+        sut.removeTask(task);
+
+        // then:
+        assertTrue(list1.equals(sut.getListTasks()));
     }
 
     @Test
@@ -50,11 +60,11 @@ public class TodosTests {
         }
         String result = sb.toString();
         // when:
-        todos.addTask("Run");
-        todos.addTask("English");
-        todos.getAllTasks();
+        sut.addTask("Run");
+        sut.addTask("English");
+        sut.getAllTasks();
 
         //then:
-        assertTrue(result.equals(todos.getAllTasks()));
+        assertTrue(result.equals(sut.getAllTasks()));
     }
 }
